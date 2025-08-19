@@ -15,10 +15,40 @@ $campos = $campos->fetchAll();
     <meta charset="UTF-8">
     <title><?= htmlspecialchars($form['nome']); ?></title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background: #fff;
+        }
+        .header-custom {
+            background: <?= htmlspecialchars($form['cor_fundo'] ?? '#0d6efd') ?>;
+            color: #fff;
+            padding: 1.5rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        .footer-custom {
+            background: <?= htmlspecialchars($form['cor_botao'] ?? '#0d6efd') ?>;
+            color: #fff;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            text-align: center;
+        }
+        .banner {
+            width: 100%;
+            height: 200px;
+            background: url('<?= htmlspecialchars($form['banner_img'] ?? '') ?>') center/cover no-repeat;
+            display: <?= empty($form['banner_img']) ? 'none' : 'block' ?>;
+            border-radius: 8px 8px 0 0;
+        }
+    </style>
 </head>
 <body class="container py-4">
-    <h1><?= htmlspecialchars($form['nome']); ?></h1>
-    <p><?= htmlspecialchars($form['descricao'] ?? ''); ?></p>
+    <div class="banner"></div>
+    <div class="header-custom">
+        <h1><?= htmlspecialchars($form['banner_text'] ?: $form['nome']); ?></h1>
+        <p><?= htmlspecialchars($form['descricao'] ?? ''); ?></p>
+    </div>
 
     <form method="post" action="salvar_resposta.php" class="row g-3">
         <input type="hidden" name="formulario_id" value="<?= (int)$formulario_id ?>">
@@ -63,5 +93,8 @@ $campos = $campos->fetchAll();
         <?php endforeach; ?>
         <div class="col-12"><button type="submit" class="btn btn-success">Enviar</button></div>
     </form>
+    <footer class="footer-custom">
+        <small><?= htmlspecialchars($form['footer_text'] ?? '') ?></small>
+    </footer>
 </body>
 </html>

@@ -21,6 +21,28 @@ if (isset($_POST['add'])) {
     header("Location: editar_formulario.php?id=".$id); exit;
 }
 
+// Editar banner
+if (isset($_POST['edit_banner'])) {
+    $banner_img = $form['banner_img'];
+    if (!empty($_FILES['banner_img']['name'])) {
+        $ext = strtolower(pathinfo($_FILES['banner_img']['name'], PATHINFO_EXTENSION));
+        if (in_array($ext, ['jpg','jpeg','png'])) {
+            $newName = uniqid("banner_") . "." . $ext;
+            $uploadDir = __DIR__ . "/uploads/banners/";
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            $destPath = $uploadDir . $newName;
+            if (move_uploaded_file($_FILES['banner_img']['tmp_name'], $destPath)) {
+                $banner_img = "uploads/banners/" . $newName;
+            }
+        }
+    }
+    $stmt = $pdo->prepare("UPDATE formularios SET banner_img=? WHERE id=?");
+    $stmt->execute([$banner_img, $id]);
+    header("Location: editar_formulario.php?id=".$id); exit;
+}
+
 // listar campos
 $campos = $pdo->prepare("SELECT id, label, tipo, opcoes, obrigatorio, ordem, COALESCE(ativo,1) AS ativo FROM campos WHERE formulario_id=? ORDER BY ordem");
 $campos->execute([$id]);
@@ -96,6 +118,25 @@ $campos = $campos->fetchAll();
           <div class="col-12">
             <button class="btn btn-primary" name="add" value="1">Adicionar</button>
           </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header">Editar Banner</div>
+      <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+          <?php if (!empty($form['banner_img'])): ?>
+            <div class="mb-3">
+              <img src="<?= htmlspecialchars($form['banner_img']) ?>" alt="Banner atual" style="max-width:100%;max-height:150px;">
+            </div>
+          <?php endif; ?>
+          <div class="mb-3">
+            <label>Nova Imagem do Banner</label>
+            <input type="file" name="banner_img" class="form-control">
+            <small class="text-muted">Formatos aceitos: JPG, PNG</small>
+          </div>
+          <button type="submit" name="edit_banner" class="btn btn-primary">Salvar Banner</button>
         </form>
       </div>
     </div>

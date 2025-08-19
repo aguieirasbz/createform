@@ -67,13 +67,13 @@ if (isset($_POST['salvar'])) {
         $ext = strtolower(pathinfo($_FILES['banner_img']['name'], PATHINFO_EXTENSION));
         if (in_array($ext, ['jpg','jpeg','png'])) {
             $newName = uniqid("banner_") . "." . $ext;
-            $uploadDir = __DIR__ . "/uploads/";
+            $uploadDir = __DIR__ . "/uploads/banners/";
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0777, true);
             }
             $destPath = $uploadDir . $newName;
             if (move_uploaded_file($_FILES['banner_img']['tmp_name'], $destPath)) {
-                $banner_img = "uploads/" . $newName;
+                $banner_img = "uploads/banners/" . $newName;
             }
         }
     }
